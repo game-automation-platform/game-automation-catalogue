@@ -1,6 +1,6 @@
 {
   "Name": "Official GAP",
-  "Updated": "2026-08-24T05:23:36Z",
+  "Updated": "2026-08-24T05:43:59Z",
   "Scripts": [
     {
       "Game": "Tsum Tsum",
@@ -8,7 +8,7 @@
       "Version": "0.1",
       "Date": "2025-08-23 19:22:34",
       "Hash": "b76aa9fa2fbb722b8dcc6365eaae097968099d3490415434eac397ae91092700",
-      "File": "Official/LineTsumTsum/Alpha/index.zip",
+      "File": "https://github.com/game-automation-platform/game-automation-catalogue/raw/master/Official/LineTsumTsum/Alpha/index.zip",
       "Message": "*Changes* 1. New Tsum! _USE WITH CAUTION_"
     }
   ]
