@@ -53,7 +53,7 @@
     --warn-bg:   oklch(0.34 0.07 70 / 0.45);
     --warn-line: oklch(0.62 0.12 70 / 0.6);
     --warn-fg:   oklch(0.90 0.10 80);
-    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --sans: 'Segoe UI', Roboto, sans-serif;
     --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
@@ -99,7 +99,7 @@
   .wrap { max-width: 1080px; margin: 0 auto; }
   hgroup { margin: 0; }
   .eyebrow {
-    font-family: var(--display); font-size: 1.857em; font-weight: 700;
+    font-family: var(--sans); font-size: 1.857em; font-weight: 700;
     letter-spacing: 0.1em; color: var(--accent); margin: 0 0 12px; text-transform: uppercase;
   }
   h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.5em, 3.4vw, 1.6em); letter-spacing: -0.02em; margin: 0 0 10px; text-wrap: balance; }
@@ -182,7 +182,7 @@
     border-radius: 22px; padding: 24px 22px; display: flex; flex-direction: column; gap: 14px;
   }
   .card.quiet { background: var(--card-2); border-color: var(--card-2-line); border-radius: 20px; padding: 22px 20px; gap: 9px; }
-  .card h3 { display: flex; align-items: center; gap: 12px; }
+  .card h3 { display: flex; align-items: start; gap: 12px; }
   .n {
     width: 34px; height: 34px; border-radius: 12px; color: var(--dark); font-family: var(--display); font-weight: 700; font-size: 0.882em;
     display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-style: normal;
