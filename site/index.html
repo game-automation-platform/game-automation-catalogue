@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Automation Platform — let the bot grind</title>
+<meta name="description" content="GAP is a free Android app that plays Disney Tsum Tsum for you. Get set up in about ten minutes on a phone or an emulator.">
+<meta property="og:title" content="Game Automation Platform">
+<meta property="og:description" content="Let the bot grind. You play the fun part. A free Android app that plays Disney Tsum Tsum for you.">
+<meta property="og:image" content="https://game-automation-platform.github.io/game-automation-catalogue/assets/icon-180.png">
+<meta name="theme-color" content="#181a22">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/icon-64.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ---- the palette, lifted from the design ------------------------------ */
+  :root {
+    color-scheme: dark;
+    --bg:        oklch(0.15 0.014 265);
+    --text:      oklch(0.97 0.006 265);
+    --text-2:    oklch(0.86 0.014 265);
+    --text-3:    oklch(0.80 0.018 265);
+    --muted:     oklch(0.76 0.022 265);
+    --muted-2:   oklch(0.72 0.022 265);
+    --accent:    oklch(0.72 0.16 55);
+    --accent-hi: oklch(0.80 0.14 55);
+    --on-accent: oklch(0.18 0.04 55);
+    --teal:      oklch(0.76 0.14 178);
+    --teal-dot:  oklch(0.72 0.13 175);
+    --teal-text: oklch(0.82 0.13 175);
+    --purple:    oklch(0.72 0.16 300);
+    --yellow:    oklch(0.84 0.15 88);
+    --card:      oklch(0.24 0.024 265 / 0.62);
+    --card-line: oklch(0.46 0.03 265 / 0.72);
+    --card-2:    oklch(0.23 0.022 265 / 0.58);
+    --card-2-line: oklch(0.42 0.028 265 / 0.55);
+    --row:       oklch(0.31 0.028 265 / 0.70);
+    --pill:      oklch(0.30 0.026 265 / 0.70);
+    --pill-line: oklch(0.54 0.035 265 / 0.70);
+    --btn:       oklch(0.31 0.028 265 / 0.72);
+    --btn-line:  oklch(0.58 0.04 265 / 0.75);
+    --btn-hi:    oklch(0.37 0.035 265 / 0.85);
+    --code-fg:   oklch(0.86 0.11 178);
+    --code-bg:   oklch(0.28 0.032 200 / 0.55);
+    --cmd-bg:    oklch(0.15 0.022 265 / 0.90);
+    --cmd-line:  oklch(0.42 0.035 265 / 0.70);
+    --num-bg:    oklch(0.40 0.04 265);
+    --num-fg:    oklch(0.92 0.012 265);
+    --dark:      oklch(0.16 0.02 255);
+    --dark-2:    oklch(0.24 0.02 255);
+    --warn-bg:   oklch(0.34 0.07 70 / 0.45);
+    --warn-line: oklch(0.62 0.12 70 / 0.6);
+    --warn-fg:   oklch(0.90 0.10 80);
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 12% 2%,  oklch(0.46 0.13 55 / 0.5)   0%, transparent 46%),
+      radial-gradient(circle at 92% 14%, oklch(0.44 0.11 185 / 0.42) 0%, transparent 42%),
+      radial-gradient(circle at 78% 88%, oklch(0.42 0.12 300 / 0.34) 0%, transparent 44%),
+      radial-gradient(oklch(0.26 0.02 265) 1.5px, transparent 1.5px);
+    background-size: auto, auto, auto, 22px 22px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.55;
+    min-height: 100vh;
+    padding: 0 24px 72px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hi); text-decoration: underline; }
+  img { max-width: 100%; }
+  b, strong { font-weight: 600; color: var(--text); }
+  ul, ol { margin: 0; padding: 0; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  code, kbd {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: oklch(0.30 0.03 265 / 0.7);
+    border: 1px solid oklch(0.45 0.03 265 / 0.6);
+    border-radius: 6px;
+    padding: 1px 6px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  kbd { background: var(--dark); border-color: oklch(0.5 0.03 265 / 0.8); font-weight: 600; }
+  pre { margin: 0; }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; white-space: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  hgroup { margin: 0; }
+  .eyebrow {
+    font-family: var(--display); font-size: 1.857em; font-weight: 700;
+    letter-spacing: 0.1em; color: var(--accent); margin: 0 0 12px; text-transform: uppercase;
+  }
+  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.5em, 3.4vw, 1.6em); letter-spacing: -0.02em; margin: 0 0 10px; text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 700; font-size: 1.214em; margin: 0; letter-spacing: -0.01em; }
+  .lede { font-size: 1.036em; line-height: 1.6; color: var(--text-3); margin: 0 0 34px; max-width: 64ch; text-wrap: pretty; }
+  section { padding-top: 56px; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: var(--on-accent); padding: 8px 14px; border-radius: 10px; font-weight: 700; z-index: 10; }
+  .skip:focus { left: 16px; }
+
+  /* ---- top bar ---------------------------------------------------------- */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 22px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 11px; color: var(--text); }
+  .brand:hover { text-decoration: none; }
+  .brand img { height: 30px; width: auto; display: block; }
+  .brand .name { font-family: var(--display); font-weight: 700; font-size: 1.286em; letter-spacing: -0.01em; }
+  .brand .name span { color: var(--accent); }
+  .pills { list-style: none; display: flex; align-items: center; gap: 8px; font-size: 0.857em; font-weight: 600; color: oklch(0.78 0.02 265); flex-wrap: wrap; }
+  .pills li { background: var(--pill); border: 1px solid var(--pill-line); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+
+  /* ---- hero ------------------------------------------------------------- */
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: center; padding: 60px 0 40px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: oklch(0.36 0.09 178 / 0.85); border: 1px solid oklch(0.6 0.11 178 / 0.6);
+    padding: 6px 13px; border-radius: 999px; margin: 0 0 22px;
+    font-size: 0.786em; font-weight: 600; color: var(--teal-text); letter-spacing: 0.04em;
+  }
+  .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--teal-dot); animation: gs-pulse 2s infinite; }
+  @keyframes gs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2em, 5.2vw, 3.5em); line-height: 1.03; letter-spacing: -0.03em; margin: 0 0 18px; text-wrap: balance; }
+  h1 span { color: var(--accent); }
+  .hero .intro { font-size: 1.143em; line-height: 1.6; color: var(--text-2); margin: 0 0 30px; max-width: 48ch; text-wrap: pretty; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 20px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--btn); border: 1px solid var(--btn-line); color: oklch(0.95 0.008 265);
+    font-weight: 600; font-size: 1.071em; padding: 15px 24px; border-radius: 16px; cursor: pointer;
+    font-family: inherit; line-height: 1.2;
+  }
+  .btn:hover { background: var(--btn-hi); color: var(--text); text-decoration: none; }
+  .btn .arrow { font-size: 1.133em; }
+  .btn.primary {
+    background: linear-gradient(100deg, oklch(0.74 0.17 45), oklch(0.8 0.15 78));
+    border-color: transparent; color: var(--on-accent); font-weight: 700;
+    box-shadow: 0 12px 34px oklch(0.72 0.16 55 / 0.4);
+  }
+  .btn.primary:hover { background: linear-gradient(100deg, oklch(0.8 0.17 45), oklch(0.86 0.15 78)); color: var(--on-accent); }
+  .btn.small { font-size: 0.929em; padding: 10px 16px; border-radius: 12px; }
+  .btn.dark { background: var(--dark); color: oklch(0.96 0.006 255); border-color: transparent; font-weight: 700; white-space: nowrap; }
+  .btn.dark:hover { background: var(--dark-2); color: oklch(0.96 0.006 255); }
+  .facts { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.893em; color: var(--muted); margin: 0; }
+  .facts li + li::before { content: "·"; margin-right: 18px; }
+  @media (max-width: 560px) { .facts li + li::before { content: none; } }
+  .more { font-size: 0.893em; color: var(--muted); margin: 14px 0 0; }
+  .hero-side { display: flex; justify-content: center; }
+  .checklist {
+    width: 100%; max-width: 320px; background: oklch(0.24 0.024 265 / 0.66); backdrop-filter: blur(16px);
+    border: 1px solid oklch(0.48 0.03 265 / 0.8); border-radius: 28px; padding: 26px 22px 22px;
+  }
+  .checklist figure { display: flex; justify-content: center; margin: 0 0 22px; }
+  .checklist figure img { width: 118px; height: auto; display: block; }
+  .checklist h2 { font-family: var(--display); font-size: 0.786em; font-weight: 700; letter-spacing: 0.09em; color: var(--muted); margin: 0 0 11px; text-transform: uppercase; }
+  .checklist ol { list-style: none; counter-reset: item; display: flex; flex-direction: column; gap: 9px; }
+  .checklist li { display: flex; align-items: center; gap: 11px; background: var(--row); border-radius: 13px; padding: 11px 13px; font-size: 0.893em; font-weight: 500; color: oklch(0.9 0.006 255); }
+  .checklist li::before {
+    counter-increment: item; content: counter(item);
+    width: 21px; height: 21px; border-radius: 7px; color: var(--dark); font-size: 0.88em; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: oklch(0.44 0.04 265);
+  }
+  .checklist li:nth-child(1)::before { background: var(--teal); }
+  .checklist li:nth-child(2)::before { background: var(--accent); }
+  .checklist li:nth-child(3)::before { background: var(--purple); }
+  .checklist li:nth-child(4)::before { background: var(--yellow); }
+
+  /* ---- cards ------------------------------------------------------------ */
+  .grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
+  .grid.narrow { grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); }
+  .card {
+    background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--card-line);
+    border-radius: 22px; padding: 24px 22px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .card.quiet { background: var(--card-2); border-color: var(--card-2-line); border-radius: 20px; padding: 22px 20px; gap: 9px; }
+  .card h3 { display: flex; align-items: center; gap: 12px; }
+  .n {
+    width: 34px; height: 34px; border-radius: 12px; color: var(--dark); font-family: var(--display); font-weight: 700; font-size: 0.882em;
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-style: normal;
+  }
+  .n.emoji { font-size: 1.059em; background: var(--row); }
+  .card p { font-size: 0.964em; line-height: 1.62; color: var(--text-2); margin: 0; text-wrap: pretty; }
+  .card .path {
+    font-family: var(--mono); font-size: 0.621em; line-height: 1.5; color: var(--code-fg); background: var(--code-bg);
+    border-left: 2px solid var(--teal-dot); border-radius: 0 9px 9px 0; padding: 9px 12px; margin-top: auto; overflow-wrap: anywhere; white-space: normal;
+  }
+  .card h3.q { font-size: 1.036em; color: oklch(0.94 0.006 255); display: block; }
+  .card p.a { font-size: 0.929em; line-height: 1.6; color: oklch(0.82 0.016 265); }
+  .bg-accent { background: var(--accent); } .bg-teal { background: var(--teal); } .bg-purple { background: var(--purple); } .bg-yellow { background: var(--yellow); }
+
+  /* ---- the setup picker ------------------------------------------------- */
+  .panel { background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--card-line); border-radius: 24px; padding: 28px 26px; }
+  .picker { display: flex; flex-direction: column; gap: 16px; margin-bottom: 26px; }
+  .picker fieldset { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .picker legend { float: left; font-family: var(--display); font-weight: 700; font-size: 1.071em; margin-right: 6px; padding: 0; }
+  .chip {
+    padding: 8px 15px; border-radius: 999px; font-size: 0.893em; font-weight: 600; cursor: pointer; font-family: inherit;
+    background: oklch(0.31 0.028 265 / 0.72); border: 1px solid oklch(0.56 0.04 265 / 0.75); color: oklch(0.86 0.016 265);
+  }
+  .chip:hover { background: var(--btn-hi); color: var(--text); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .guide-title { font-family: var(--display); font-weight: 700; font-size: clamp(1.429em, 2.6vw, 1.857em); letter-spacing: -0.02em; margin: 0 0 6px; }
+  .guide-intro { font-size: 1em; color: var(--text-3); margin: 0 0 22px; max-width: 70ch; text-wrap: pretty; }
+  .part { margin-top: 26px; padding-top: 0; }
+  .part h4 { font-family: var(--display); font-size: 0.857em; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
+  .part h4 .n { width: 22px; height: 22px; border-radius: 7px; font-size: 1em; }
+  .steps { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 11px; }
+  .steps > li { display: flex; gap: 13px; align-items: flex-start; font-size: 0.964em; line-height: 1.6; color: oklch(0.84 0.012 255); text-wrap: pretty; }
+  .steps > li::before {
+    counter-increment: step; content: counter(step);
+    width: 22px; height: 22px; border-radius: 7px; background: var(--num-bg); color: var(--num-fg); font-size: 0.815em; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .steps > li > div { flex: 1; min-width: 0; }
+  .cmd {
+    font-family: var(--mono); font-size: 0.857em; line-height: 1.6; color: oklch(0.85 0.006 255); background: var(--cmd-bg);
+    border: 1px solid var(--cmd-line); border-radius: 13px; padding: 15px 16px; margin-top: 20px; overflow-x: auto; white-space: pre;
+  }
+  .steps .cmd { margin-top: 10px; font-size: 0.889em; }
+
+  /* ---- mock terminal ---------------------------------------------------- */
+  /* The starter tool is a numbered menu in a terminal, so the guide shows the
+     screen itself at each step: what to read is marked, what to type is a key. */
+  .term { margin: 12px 0 2px; border: 1px solid var(--cmd-line); border-radius: 13px; background: var(--cmd-bg); overflow: hidden; }
+  .term-bar {
+    display: flex; align-items: center; padding: 8px 14px; background: oklch(0.24 0.022 265 / 0.9); border-bottom: 1px solid var(--cmd-line);
+    font-family: var(--sans); font-size: 0.852em; font-weight: 500; color: var(--muted);
+  }
+  .term-dots { width: 10px; height: 10px; border-radius: 50%; background: oklch(0.5 0.03 265); box-shadow: 16px 0 0 oklch(0.5 0.03 265), 32px 0 0 oklch(0.5 0.03 265); margin-right: 44px; flex-shrink: 0; }
+  .term-body { margin: 0; padding: 12px 16px 14px; font-family: var(--mono); font-size: 0.889em; line-height: 1.6; color: oklch(0.85 0.006 255); overflow-x: auto; white-space: pre; }
+  .t-dim { color: var(--muted-2); }
+  .t-look { background: oklch(0.84 0.15 88 / 0.14); color: var(--yellow); border-radius: 4px; padding: 1px 4px; margin: 0 -4px; }
+  .t-note { color: var(--accent); font-style: normal; }
+  .t-key { font-family: inherit; font-size: inherit; background: var(--accent); border: 0; border-radius: 4px; padding: 0 6px; color: var(--on-accent); font-weight: 700; }
+  .t-enter { color: var(--accent); font-style: normal; }
+  .t-cmd { color: var(--text); font-weight: 600; }
+  .t-cursor::after { content: ""; display: inline-block; width: 7px; height: 1.05em; vertical-align: -0.15em; background: oklch(0.85 0.006 255); animation: t-blink 1.1s steps(1) infinite; }
+  @keyframes t-blink { 50% { opacity: 0; } }
+  .note { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 14px; padding: 13px 16px; font-size: 0.929em; line-height: 1.55; color: var(--warn-fg); margin: 20px 0 0; }
+  .note strong { color: inherit; }
+  .caution { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 24px; }
+  .caution .icon { font-size: 1.286em; line-height: 1.25; flex-shrink: 0; }
+  .caution p { margin: 0; }
+  .caution strong { display: block; margin-bottom: 2px; }
+  .tip { background: oklch(0.28 0.05 178 / 0.4); border: 1px solid oklch(0.55 0.1 178 / 0.5); border-radius: 14px; padding: 13px 16px; font-size: 0.929em; line-height: 1.55; color: oklch(0.9 0.06 178); margin: 14px 0 0; }
+  .tip strong { color: inherit; }
+
+  /* ---- downloads -------------------------------------------------------- */
+  .dl { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .dl .card { gap: 12px; }
+  .dl .tag { font-family: var(--display); font-size: 0.786em; font-weight: 700; letter-spacing: 0.09em; color: var(--muted); text-transform: uppercase; margin: 0; }
+  .dl .tag.rec { color: var(--teal-text); }
+  .dl h3 { display: block; }
+  .dl .btns { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .dl .btn { justify-content: space-between; width: 100%; }
+  .dl .btn small { font-weight: 500; font-size: 0.767em; color: var(--muted); }
+  .dl .btn.small small { font-size: 0.885em; }
+  .dl .btn.primary small { color: var(--on-accent); opacity: 0.8; }
+  .dl .who { font-size: 0.893em; color: var(--muted); line-height: 1.5; margin: 0; }
+  .dl .btns .who { margin-top: 4px; }
+  .dl .size { font-size: 0.857em; color: var(--muted-2); margin: 0; }
+  .links { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 22px; font-size: 0.964em; }
+
+  /* ---- closing ---------------------------------------------------------- */
+  .cta {
+    background: linear-gradient(105deg, oklch(0.74 0.17 42), oklch(0.8 0.15 80)); border-radius: 26px;
+    box-shadow: 0 24px 70px oklch(0.72 0.16 55 / 0.3); padding: clamp(28px, 4vw, 44px);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px;
+    margin-top: 30px;
+  }
+  .cta h2 { font-size: clamp(1.643em, 3vw, 2.214em); color: var(--dark); margin-bottom: 8px; }
+  .cta p { font-size: 1.036em; line-height: 1.55; color: oklch(0.25 0.04 55); max-width: 54ch; margin: 0; }
+  .cta .right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .cta .right img { height: 72px; width: auto; display: block; opacity: 0.22; }
+  footer { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; font-size: 0.857em; color: var(--muted-2); padding: 26px 4px 0; }
+  footer ul { list-style: none; display: flex; flex-wrap: wrap; gap: 18px; }
+
+  @media (max-width: 480px) {
+    body { padding: 0 18px 56px; }
+    .hero { padding-top: 40px; gap: 32px; }
+    .btn { width: 100%; justify-content: center; }
+    .panel { padding: 22px 18px; }
+    .term-body { font-size: 0.815em; padding: 10px 12px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .badge::before, .t-cursor::after { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap top">
+  <a class="brand" href="#">
+    <img src="assets/GAP_mark_mono.png" alt="">
+    <span class="name">Game Automation <span>Platform</span></span>
+  </a>
+  <ul class="pills" aria-label="At a glance">
+    <li>App v<span data-app-version>0.17</span></li>
+    <li>Android 7.0+</li>
+    <li>Free · no account</li>
+  </ul>
+</header>
+
+<main id="main">
+
+<!-- =============================================================== hero -->
+<section class="wrap hero" aria-labelledby="hero-title">
+  <div>
+    <p class="badge">WORKS WITHOUT ROOT</p>
+    <h1 id="hero-title">Let the bot grind.<br><span>You play the fun part.</span></h1>
+    <p class="intro">GAP is a free Android app that plays games for you. It watches the screen and taps where you would — so the daily grind of <b>Disney Tsum Tsum</b> runs by itself, on your phone or on an emulator on your computer.</p>
+    <p class="ctas">
+      <a class="btn primary" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter.zip"><span class="arrow" aria-hidden="true">↓</span><span>Windows · gap-starter.zip</span></a>
+      <a class="btn" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter.tar.gz"><span class="arrow" aria-hidden="true">↓</span><span>macOS / Linux · .tar.gz</span></a>
+    </p>
+    <ul class="facts">
+      <li>About <span data-size="gap-starter.zip">70 MB</span>, app included</li>
+      <li>Installs it for you</li>
+      <li>No sign-up</li>
+    </ul>
+    <p class="more">Only need the app, or already have the tool? <a href="#downloads">All downloads ↓</a></p>
+  </div>
+
+  <aside class="hero-side" aria-labelledby="checklist-title">
+    <div class="checklist">
+      <figure><img src="assets/GAP_logo.png" alt="The GAP logo: a letter A made of robot arms"></figure>
+      <h2 id="checklist-title">First run checklist</h2>
+      <ol>
+        <li>Get the starter tool</li>
+        <li>Install the app, start the engine</li>
+        <li>Allow two permissions</li>
+        <li>Download the script, press Play</li>
+      </ol>
+    </div>
+  </aside>
+</section>
+
+<!-- ============================================================ what it is -->
+<section class="wrap" id="what" aria-labelledby="what-title">
+  <hgroup>
+    <p class="eyebrow">What is GAP?</p>
+    <h2 id="what-title">A robot thumb for your phone</h2>
+  </hgroup>
+  <p class="lede">No hacking, no modified game, no cheats. GAP plays the game the same way you do — by looking at the screen and tapping on it — just tirelessly. Here is the whole idea in three parts.</p>
+  <ul class="grid">
+    <li class="card">
+      <h3><span class="n emoji" aria-hidden="true">👀</span>It looks at the screen</h3>
+      <p>Many times a second GAP takes a picture of the game and works out what is on it: the board, the buttons, the mailbox, the score page.</p>
+    </li>
+    <li class="card">
+      <h3><span class="n emoji" aria-hidden="true">👆</span>It taps like a person</h3>
+      <p>Then it taps and drags exactly where you would. Nothing inside the game is changed, and the game keeps running as normal underneath.</p>
+    </li>
+    <li class="card">
+      <h3><span class="n emoji" aria-hidden="true">🎮</span>You stay in charge</h3>
+      <p>A small floating bar sits over the game with <b>Play</b>, <b>Stop</b> and <b>Settings</b>. Press Stop and it stops. Change a setting and the next round uses it.</p>
+    </li>
+  </ul>
+  <p class="lede" style="margin-top:26px;margin-bottom:0">Each game gets its own <b>script</b> — the recipe that tells GAP what to do. Right now there is one: <b>Disney Tsum Tsum</b>. Left running, it plays rounds, collects hearts and mailbox items, raises level caps and buys boxes, for as long as you like. The app downloads the script for you, so there is nothing extra to find.</p>
+</section>
+
+<!-- ============================================================ you need -->
+<section class="wrap" id="need" aria-labelledby="need-title">
+  <hgroup>
+    <p class="eyebrow">Before you start</p>
+    <h2 id="need-title">Three things you need</h2>
+  </hgroup>
+  <ol class="grid" style="margin-top:26px">
+    <li class="card quiet">
+      <h3 class="q">1 · Somewhere to run the game</h3>
+      <p class="a">An Android phone or tablet (Android 7 or newer), <b>or</b> an emulator on your computer: <a href="https://www.mumuplayer.com/" target="_blank" rel="noopener">MuMu Player</a> on Windows (the one GAP is built and tested on), <a href="https://www.bluestacks.com/" target="_blank" rel="noopener">BlueStacks Air</a> on an M-series Mac, <a href="https://waydro.id/" target="_blank" rel="noopener">Waydroid</a> on Linux. LDPlayer, Nox and MEmu work on Windows too.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">2 · Tsum Tsum, installed and logged in</h3>
+      <p class="a">Install Disney Tsum Tsum from the Play Store on that device or emulator, sign in, and reach the game's home screen at least once. GAP cannot help until the game itself works.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">3 · A computer, for one step</h3>
+      <p class="a">The engine that reads the screen needs more power than a normal app gets, and a computer hands it that power. Emulator users already have one. Phone users need a USB cable too. <strong>A rooted device skips this entirely.</strong></p>
+    </li>
+  </ol>
+</section>
+
+<!-- ============================================================= 4 steps -->
+<section class="wrap" id="setup" aria-labelledby="setup-title">
+  <hgroup>
+    <p class="eyebrow">Get started</p>
+    <h2 id="setup-title">Four steps, about ten minutes</h2>
+  </hgroup>
+  <p class="lede">Everyone runs the same small tool once, on a computer, to put the app on the device. If the device is not rooted the tool also starts GAP's engine — and you run it again after every restart. On a rooted device the app starts its own engine, so step 2 is just the install.</p>
+  <ol class="grid">
+    <li class="card">
+      <h3><span class="n bg-accent" aria-hidden="true">1</span>Get the starter tool</h3>
+      <p>One download for Windows, Mac and Linux, with the app inside it. Unzip it anywhere. It is a plain folder — nothing gets installed on your computer.</p>
+      <p class="path">gap-starter.zip  ·  gap-starter.tar.gz</p>
+    </li>
+    <li class="card">
+      <h3><span class="n bg-teal" aria-hidden="true">2</span>Install the app, start the engine</h3>
+      <p>Run the one file named for your computer, pick your device from a numbered list, then follow the <b>Next:</b> line it prints: <kbd>6</kbd> installs the app, <kbd>1</kbd> starts the engine.</p>
+      <p class="path">Start-Windows  /  Start-Linux</p>
+    </li>
+    <li class="card">
+      <h3><span class="n bg-purple" aria-hidden="true">3</span>Allow two permissions</h3>
+      <p><b>Display over other apps</b> lets the floating bar sit on top of the game. <b>All files access</b> lets the app read the folder scripts live in. The app asks for both the first time it opens.</p>
+      <p class="path">GAP app → Grant → Grant</p>
+    </li>
+    <li class="card">
+      <h3><span class="n bg-yellow" aria-hidden="true">4</span>Download the script, press Play</h3>
+      <p>The <b>Library</b> tab lists Tsum Tsum. Tap Download, switch to the game, tap Play. The floating bar appears and the bot takes it from there.</p>
+      <p class="path">Library → Download → Play</p>
+    </li>
+  </ol>
+</section>
+
+<!-- ============================================================ your setup -->
+<section class="wrap" id="guide" aria-labelledby="guide-title">
+  <hgroup>
+    <p class="eyebrow">Step by step</p>
+  </hgroup>
+  <p class="lede">Answer a couple of questions and the guide below rewrites itself for exactly what you have. Every step is spelled out — nothing here assumes you have done this before.</p>
+
+  <div class="panel">
+    <form class="picker" id="picker">
+      <fieldset data-q="where">
+        <legend>Where will Tsum Tsum run?</legend>
+        <button type="button" class="chip" data-v="emulator">An emulator on my computer</button>
+        <button type="button" class="chip" data-v="phone">My Android phone or tablet</button>
+        <button type="button" class="chip" data-v="none">I don't have either yet</button>
+      </fieldset>
+      <fieldset data-q="os">
+        <legend>Which computer?</legend>
+        <button type="button" class="chip" data-v="win">Windows</button>
+        <button type="button" class="chip" data-v="mac">Mac (M-series)</button>
+        <button type="button" class="chip" data-v="linux">Linux</button>
+      </fieldset>
+      <fieldset data-q="root">
+        <legend>Is it rooted?</legend>
+        <button type="button" class="chip" data-v="yes">Yes, rooted</button>
+        <button type="button" class="chip" data-v="no">No, or not sure</button>
+      </fieldset>
+    </form>
+    <article id="guide-body" aria-live="polite"></article>
+  </div>
+</section>
+
+<!-- ============================================================= downloads -->
+<section class="wrap" id="downloads" aria-labelledby="downloads-title">
+  <hgroup>
+    <p class="eyebrow">Downloads</p>
+    <h2 id="downloads-title">Pick what you need</h2>
+  </hgroup>
+  <p class="lede">Every download comes from the project's <a href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest" target="_blank" rel="noopener">Releases page on GitHub</a>, and these links always point at the newest one. The Tsum Tsum script itself is <em>not</em> a download here — the app fetches it from its Library tab.</p>
+  <ul class="dl">
+    <li class="card">
+      <p class="tag rec">Recommended · everything</p>
+      <h3>The starter tool, app included</h3>
+      <p class="who">The tool that installs the app and starts the engine, with the app for every kind of device inside it. This is the one the guide above uses.</p>
+      <ul class="btns">
+        <li><a class="btn primary" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter.zip"><span>Windows · gap-starter.zip</span><small data-size="gap-starter.zip">~70 MB</small></a></li>
+        <li><a class="btn" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter.tar.gz"><span>macOS / Linux · .tar.gz</span><small data-size="gap-starter.tar.gz">~70 MB</small></a></li>
+      </ul>
+      <p class="size">Mac users: take the .tar.gz. A .zip that came through a browser gets blocked by macOS; the .tar.gz does not.</p>
+    </li>
+    <li class="card">
+      <p class="tag">Just the app</p>
+      <h3>The APK on its own</h3>
+      <p class="who">For a rooted device, or if you already have the tool. There is one file per kind of processor — pick the one that matches:</p>
+      <ul class="btns">
+        <li>
+          <a class="btn small" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-x86_64.apk"><span>gap-x86_64.apk</span><small data-size="gap-x86_64.apk">~28 MB</small></a>
+          <p class="who">Emulators on a Windows PC (MuMu, LDPlayer, Nox, MEmu) and Waydroid on a Linux PC.</p>
+        </li>
+        <li>
+          <a class="btn small" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-arm64-v8a.apk"><span>gap-arm64-v8a.apk</span><small data-size="gap-arm64-v8a.apk">~15 MB</small></a>
+          <p class="who">Any phone or tablet from the last several years, and BlueStacks Air on an M-series Mac.</p>
+        </li>
+        <li>
+          <a class="btn small" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-armeabi-v7a.apk"><span>gap-armeabi-v7a.apk</span><small data-size="gap-armeabi-v7a.apk">~14 MB</small></a>
+          <p class="who">Very old 32-bit phones only.</p>
+        </li>
+      </ul>
+      <p class="size">Not sure? Use the starter tool — it checks the device and picks the right one.</p>
+    </li>
+    <li class="card">
+      <p class="tag">Tool only</p>
+      <h3>The starter tool, no app inside</h3>
+      <p class="who">A tiny download for people who already have the tool and want the newest version of it. Extract it over your existing folder. It can still install the app — it downloads it for you when you choose <kbd>8</kbd> in its menu.</p>
+      <ul class="btns">
+        <li><a class="btn small" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter-scripts.zip"><span>Windows · gap-starter-scripts.zip</span><small data-size="gap-starter-scripts.zip">~60 KB</small></a></li>
+        <li><a class="btn small" href="https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/gap-starter-scripts.tar.gz"><span>macOS / Linux · .tar.gz</span><small data-size="gap-starter-scripts.tar.gz">~50 KB</small></a></li>
+      </ul>
+      <p class="size">Already have the app? Its Library screen tells you when a newer app is out and updates it for you.</p>
+    </li>
+  </ul>
+  <ul class="links">
+    <li><a href="https://github.com/game-automation-platform/game-automation-catalogue/releases" target="_blank" rel="noopener">All releases and release notes →</a></li>
+    <li><a href="https://github.com/game-automation-platform/game-automation-catalogue/blob/master/Official/LineTsumTsum/Beta/CHANGELOG.md" target="_blank" rel="noopener">Tsum Tsum script changelog<span data-script-version></span> →</a></li>
+    <li><a href="https://github.com/game-automation-platform/game-automation-scripts" target="_blank" rel="noopener">The script's source code →</a></li>
+  </ul>
+</section>
+
+<!-- =================================================================== faq -->
+<section class="wrap" id="faq" aria-labelledby="faq-title">
+  <hgroup>
+    <p class="eyebrow">Questions</p>
+  </hgroup>
+  <ul class="grid narrow" style="margin-top:26px">
+    <li class="card quiet">
+      <h3 class="q">Why do I need a computer at all?</h3>
+      <p class="a">Reading the screen and tapping inside another app takes a level of access that Android only hands out through a cable from a computer. The starter tool does that in one keypress and then gets out of the way — the phone or emulator does everything else.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Do I need root?</h3>
+      <p class="a">No. Root only replaces the computer: with it, the app starts its own engine and takes its own permissions, and there is nothing to redo after a restart. Windows emulators can usually be rooted with one switch in their settings, which is why the guide suggests it there.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Why 540 × 960 and 120 FPS on an emulator?</h3>
+      <p class="a">The script was measured and tuned on a 540 × 960 screen, so everything lines up exactly. 120 FPS is the frame rate it was tuned with: it makes some of the game's animations play faster, but a round takes as long as it always does. Neither is required — but if you change the frame rate, tell the script in its settings (<b>Device frame rate</b>), so it knows how fast those animations run.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">It stopped working after a restart</h3>
+      <p class="a">On a device that is not rooted the engine does not survive a reboot. Run the starter tool again — it opens straight to your device — and type <kbd>1</kbd>. The app's main screen says <b>Online</b> once it is back.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Windows says it “protected your PC”</h3>
+      <p class="a">That blue box appears for any downloaded file Windows has not seen before. Click <b>More info</b>, then <b>Run anyway</b>. Start-Windows is a two-line text file; you are welcome to open it in Notepad first.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Will my game account get banned?</h3>
+      <p class="a">Possibly. Automating a game is against most games' rules, and GAP cannot hide what it does. Use an account you would be OK losing, and read the game's terms before you run anything.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Which Android versions work?</h3>
+      <p class="a">Android 7.0 and newer — phones, tablets, and the emulators: MuMu Player and friends on Windows, BlueStacks Air on M-series Macs, Waydroid on Linux. The starter tool picks the right build of the app for whichever you have.</p>
+    </li>
+    <li class="card quiet">
+      <h3 class="q">Where do I get help?</h3>
+      <p class="a">Open an issue on the <a href="https://github.com/game-automation-platform/game-automation-catalogue/issues" target="_blank" rel="noopener">catalogue's GitHub page</a>. If the script did something odd, press <b>Report</b> on the Quick Bar or the settings' Debug tab first — it saves the screen and the log so you can attach them.</p>
+    </li>
+  </ul>
+</section>
+
+<!-- =============================================================== closing -->
+<section class="wrap cta" aria-labelledby="cta-title">
+  <div>
+    <h2 id="cta-title">Ready to run your first script?</h2>
+    <p>Get the starter tool, follow the guide for your setup, and press Play. The floating bar takes it from there.</p>
+  </div>
+  <div class="right">
+    <img src="assets/GAP_mark_mono.png" alt="">
+    <a class="btn dark" href="#guide">Show me the steps</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p>Game Automation Platform · App v<span data-app-version>0.17</span> · Android 7.0+</p>
+  <nav aria-label="Project links">
+    <ul>
+      <li><a href="https://github.com/game-automation-platform/game-automation-catalogue/releases" target="_blank" rel="noopener">Releases</a></li>
+      <li><a href="https://github.com/game-automation-platform/game-automation-scripts" target="_blank" rel="noopener">Script docs</a></li>
+      <li><a href="https://github.com/game-automation-platform/game-automation-catalogue/issues" target="_blank" rel="noopener">Report a problem</a></li>
+    </ul>
+  </nav>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var REL = 'https://github.com/game-automation-platform/game-automation-catalogue/releases/latest/download/';
+  var dl = function (name, label) { return '<a href="' + REL + name + '">' + (label || name) + '</a>'; };
+
+  // ---------------------------------------------------------------- state
+  var state = { where: 'emulator', os: 'win', root: 'no' };
+  var valid = { where: ['emulator', 'phone', 'none'], os: ['win', 'mac', 'linux'], root: ['yes', 'no'] };
+  try {
+    var saved = JSON.parse(localStorage.getItem('gap-setup') || 'null');
+    if (saved && saved.where && saved.root && saved.os) state = saved;
+    else {
+      var ua = navigator.userAgent || '', pf = navigator.platform || '';
+      if (/Mac/.test(pf)) state.os = 'mac';
+      else if (/Linux/.test(pf) && !/Android/.test(ua)) state.os = 'linux';
+    }
+  } catch (e) {}
+  // ?where=phone&root=no&os=mac picks the guide, so a link can point someone
+  // straight at their own steps.
+  try {
+    var qs = new URLSearchParams(location.search);
+    Object.keys(valid).forEach(function (k) {
+      var v = qs.get(k);
+      if (v && valid[k].indexOf(v) !== -1) state[k] = v;
+    });
+  } catch (e) {}
+  Object.keys(valid).forEach(function (k) { if (valid[k].indexOf(state[k]) === -1) state[k] = valid[k][0]; });
+
+  // ---------------------------------------------------------- guide parts
+  // Each part is a list of steps (HTML strings). Guides are assembled from
+  // them below, so the wording of a shared step lives in one place.
+
+  var emulatorName = { win: 'MuMu Player', mac: 'BlueStacks Air', linux: 'Waydroid' };
+
+  // Screen size, frame rate and (on Windows) the root switch, per emulator.
+  function emulatorTune(os, rooted, fresh) {
+    var s;
+    if (os === 'mac') {
+      s = [
+        'Open BlueStacks Air\'s settings — the <b>⚙ gear</b> on the side bar of its window.',
+        'Under <b>Display</b>, set the resolution to a <b>portrait</b> size of <b>540 × 960</b> (choose <b>Custom</b> if that size is not in the list). If it asks for a DPI, use <b>240</b>.',
+        'Under <b>Performance</b>, set the <b>Frame rate</b> to <b>120</b>. If 120 is not offered, turn on the high-frame-rate option first.',
+        'Under <b>Advanced</b>, turn on <b>Android Debug Bridge</b> (ADB). This is what lets the starter tool talk to BlueStacks. It listens on port 5555, which the tool checks by itself.',
+        'Press <b>Save</b> and let BlueStacks restart.',
+        'Inside BlueStacks, open the <b>Play Store</b>, install <b>Disney Tsum Tsum</b>, sign in, and get to the game\'s home screen once.'
+      ];
+    } else if (os === 'linux') {
+      s = [
+        'With Waydroid installed and started once, open a terminal and set the screen size:<br><code>waydroid prop set persist.waydroid.width 540</code><br><code>waydroid prop set persist.waydroid.height 960</code>',
+        'Restart it so the size takes: <code>waydroid session stop</code>, then open <b>Waydroid</b> again from your app menu.',
+        'Waydroid draws at your monitor\'s refresh rate — 60 on most, 120 or more on a gaming monitor — and has no frame-rate setting of its own. Note what yours is; the script asks for it later.',
+        'Inside Waydroid, open the <b>Play Store</b>, install <b>Disney Tsum Tsum</b>, sign in, and get to the game\'s home screen once. If the Play Store calls the game <em>not compatible</em>, Waydroid needs the ARM translation layer: the community <a href="https://github.com/casualsnek/waydroid_script" target="_blank" rel="noopener">waydroid_script</a> installs it (libndk for AMD processors, libhoudini for Intel).'
+      ];
+    } else {
+      s = [
+        'Open the emulator\'s settings — the <b>⚙ gear</b> at the top right of its window.',
+        'Find <b>Display</b> (some emulators call it <b>Screen</b>). Under <b>Resolution</b> choose <b>Custom</b> (or <b>Phone</b>) and type <b>540</b> for width and <b>960</b> for height. If it asks for a DPI, use <b>240</b>.',
+        'Find the <b>Frame rate</b> (sometimes <b>FPS</b>) setting and set it to <b>120</b>. In MuMu Player it lives under Display too; some versions call it a “high frame rate” mode.'
+      ];
+      if (rooted) s.push('Find the <b>Root</b> switch and turn it on. In MuMu Player it is under <b>Other</b> and called <b>Root permission</b>; in LDPlayer it is under <b>Other settings</b>.' +
+        (fresh ? '' : ' If you cannot find one, your emulator may not offer it — pick <b>No, or not sure</b> above and follow that guide instead.'));
+      s.push('Press <b>Save</b>. The emulator will want to restart — let it.');
+      s.push('Inside the emulator, open the <b>Play Store</b>, install <b>Disney Tsum Tsum</b>, sign in, and get to the game\'s home screen once.');
+    }
+    return s;
+  }
+
+  // Installing an emulator from scratch, per platform.
+  var emulatorInstall = {
+    win: [
+      'Go to <a href="https://www.mumuplayer.com/" target="_blank" rel="noopener">mumuplayer.com</a> and download <b>MuMu Player 12</b> for Windows. Install it like any other program and open it once, so it finishes setting itself up.'
+    ],
+    mac: [
+      'Go to <a href="https://www.bluestacks.com/" target="_blank" rel="noopener">bluestacks.com</a> and download <b>BlueStacks Air</b> — the version made for M-series (Apple Silicon) Macs. Open the downloaded file, drag BlueStacks Air into <b>Applications</b>, and open it once. If macOS says it was blocked, allow it under <b>System Settings → Privacy &amp; Security</b>.'
+    ],
+    linux: [
+      'Install <b>Waydroid</b> by following <a href="https://docs.waydro.id/usage/install-on-desktops" target="_blank" rel="noopener">docs.waydro.id</a> for your distribution. When it asks which Android image to fetch, pick the one <b>with Google apps</b> (GAPPS), so the Play Store is there. Waydroid needs a Wayland desktop session — the default on recent Ubuntu and Fedora.',
+      'Open <b>Waydroid</b> from your app menu once and let it finish booting. The Play Store may refuse to sign in until the device is registered with Google — the docs page <em>Google Play certification</em> has the one command that does it.'
+    ]
+  };
+
+  function toolGet(os) {
+    if (os === 'win') return [
+      'Download ' + dl('gap-starter.zip') + ' (about 70 MB) and let it finish.',
+      'Find it in your <b>Downloads</b> folder. Right-click it, choose <b>Extract All…</b>, then <b>Extract</b>. A folder called <b>gap-starter</b> appears, with <b>GameAutomationPlatform-Starter</b> inside it.',
+      'Open that inner folder and double-click <b>Start-Windows</b>. A black text window opens — that is the tool. If Windows shows a blue “Windows protected your PC” box, click <b>More info</b>, then <b>Run anyway</b>.'
+    ];
+    var open = os === 'mac'
+      ? 'Open <b>Terminal</b> (press <kbd>⌘</kbd> <kbd>Space</kbd>, type <em>Terminal</em>, press Enter).'
+      : 'Open a terminal.';
+    return [
+      'Download ' + dl('gap-starter.tar.gz') + ' (about 70 MB) and let it finish.' + (os === 'mac' ? ' Take the <b>.tar.gz</b>, not the .zip — a .zip that came through a browser gets blocked by macOS.' : ''),
+      open + ' Copy the four lines below, paste them into the terminal and press Enter. That unpacks the tool into a folder called <b>GameAutomationPlatform-Starter</b> and runs it.<pre class="cmd">' + esc(cmdNix) + '</pre>'
+    ];
+  }
+
+  // ------------------------------------------------------- mock terminal
+  // The tool is a numbered menu in a terminal, so the guide shows the screen
+  // itself at each step, drawn from the same lines the tool prints. A plain
+  // string is one line; look/typed/dim/cmdline/cursor give a line a role.
+  function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function pad(t, n) { while (t.length < n) t += ' '; return t; }
+  function raw(h) { return { html: h }; }
+  function dim(t) { return raw('<span class="t-dim">' + esc(t) + '</span>'); }
+  function look(t, note) { return raw('<mark class="t-look">' + esc(t) + '</mark>' + (note ? '<i class="t-note">  ← ' + esc(note) + '</i>' : '')); }
+  function typed(prompt, key) { return raw(esc(prompt) + (key ? '<kbd class="t-key">' + esc(key) + '</kbd> ' : '') + '<i class="t-enter">↵ Enter</i>'); }
+  function cursor(prompt) { return raw(esc(prompt) + '<span class="t-cursor" aria-hidden="true"></span>'); }
+  function cmdline(c) { return raw('<span class="t-dim">$ </span><b class="t-cmd">' + esc(c) + '</b>'); }
+  function term(title, lines) {
+    return '<figure class="term"><figcaption class="term-bar"><span class="term-dots" aria-hidden="true"></span>' + esc(title) + '</figcaption><pre class="term-body">' +
+      lines.map(function (l) { return typeof l === 'string' ? esc(l) : l.html; }).join('\n') + '</pre></figure>';
+  }
+  var termTitle = { win: 'Start-Windows', mac: 'Terminal — Start-Linux.sh', linux: 'Terminal — Start-Linux.sh' };
+  var ADB_REV = '37.0.1';
+  var RULE = '  ' + new Array(74).join('-');
+  var HEAD = ['  Game Automation Platform -- service starter', '  adb: downloaded r' + ADB_REV, RULE];
+
+  // How each kind of device shows up in the tool's list. The model column is
+  // whatever the device claims to be, and the step says so.
+  var DEV = {
+    win:   { serial: '127.0.0.1:16384',      model: 'MuMu',                   abi: 'x86_64' },
+    mac:   { serial: '127.0.0.1:5555',       model: 'BlueStacks',             abi: 'arm64-v8a' },
+    linux: { serial: '192.168.240.112:5555', model: 'WayDroid x86_64 Device', abi: 'x86_64' },
+    phone: { serial: '2B031FDH2001AB',       model: 'Pixel 7',                abi: 'arm64-v8a' }
+  };
+  var APKS = ['gap-arm64-v8a.apk', 'gap-armeabi-v7a.apk', 'gap-x86_64.apk'];
+  var NEXT = {
+    'not installed': ['  Next: install the app -- 6 for the APK in this bundle, or 8 for the', '  latest published one -- then 1 to start the service.'],
+    stopped:         ['  Next: choose 1 to start the service. The app needs it running before', '  a script can run.'],
+    running:         ['  Next: nothing -- the service is up. Use the app on the device. After', '  the device reboots, come back here and choose 1 again.']
+  };
+
+  // The one-time adb download, asked before the menu appears.
+  function frameAdb(os) {
+    var pt = {
+      win:   ['win',    8,  '…\\GameAutomationPlatform-Starter\\adb\\windows'],
+      mac:   ['darwin', 15, '…/GameAutomationPlatform-Starter/adb/darwin'],
+      linux: ['linux',  9,  '…/GameAutomationPlatform-Starter/adb/linux']
+    }[os];
+    return term(termTitle[os], [
+      'This tool needs Google\'s adb, and none is in this folder yet.',
+      '  fetch : https://dl.google.com/android/repository/platform-tools_r' + ADB_REV + '-' + pt[0] + '.zip',
+      '  size  : about ' + pt[1] + ' MB',
+      '  into  : ' + pt[2],
+      '  check : sha256 from platform-tools.txt, recorded when this tool was built',
+      'Only adb is kept out of the archive; the rest is deleted.',
+      '',
+      typed('  download it now? [Y/n] ', 'y'),
+      'downloading platform-tools r' + ADB_REV + ' ...'
+    ]);
+  }
+
+  // The first page: every device adb can see.
+  function tableRow(i, d, svc) { return '  ' + pad(i + ')', 3) + ' ' + pad(d.serial, 20) + ' ' + pad(d.model, 18) + ' ' + pad(d.abi, 11) + ' ' + svc; }
+  function frameList(os, d, svc, key, note) {
+    return term(termTitle[os], HEAD.concat([
+      '  scanning for devices ...',
+      '',
+      '  Every phone and emulator adb can see, and where the service stands on',
+      '  each. Type the number of the one to work on and press enter. It stays',
+      '  chosen -- across runs of this tool too -- until you change it here.',
+      '',
+      '  ' + pad('#', 3) + ' ' + pad('SERIAL', 20) + ' ' + pad('MODEL', 18) + ' ' + pad('ABI', 11) + ' SERVICE',
+      RULE,
+      look(tableRow(1, d, svc), note),
+      RULE,
+      '  r) Refresh    q) Quit',
+      '',
+      typed('  device: ', key)
+    ]));
+  }
+  function frameNoDevice(os) {
+    return term(termTitle[os], HEAD.concat([
+      '  scanning for devices ...',
+      '',
+      'No device found.',
+      '',
+      '  - Start your emulator, or plug the phone in with USB debugging enabled.',
+      '  - Probed for emulators on 127.0.0.1: 16384 16416 16448 16480 7555 5555 ...',
+      '    A different port can be added with GAP_EXTRA_PORTS="12345".',
+      '',
+      '  Once it is on and connected, choose r to look again.',
+      '',
+      '  r) Refresh    q) Quit',
+      '',
+      typed('  choose: ', 'q')
+    ]));
+  }
+
+  // The second page: the chosen device and everything that acts on it.
+  // o.menu 'full' prints the whole menu, otherwise its first lines and a fold.
+  // o.key is what gets typed at the prompt (none: the cursor waits there) and
+  // o.tail what the tool prints after it. o.note sits on the Next: line,
+  // o.svcNote on the Service line; o.rootNote moves the mark from Next: to
+  // the Service heading, for the device that does not need the service.
+  function frameDevice(os, d, svc, o) {
+    var heading = '  Service (not needed on a rooted device -- the app starts it itself)';
+    var lines = HEAD.concat([
+      '  Device : ' + d.serial + '   ' + d.model + '   ' + d.abi,
+      look('  Service: ' + svc, o.svcNote),
+      RULE,
+      '  Everything below acts on this device. It stays chosen, the next time',
+      '  this tool runs too, until you choose d.',
+      o.rootNote ? NEXT[svc][0] : look(NEXT[svc][0], o.note),
+      o.rootNote ? NEXT[svc][1] : look(NEXT[svc][1]),
+      '',
+      o.rootNote ? look(heading, o.rootNote) : heading,
+      '  1) Start service'
+    ]);
+    if (o.menu === 'full') lines = lines.concat([
+      '  2) Restart service (force)',
+      '  3) Stop service',
+      '  4) Show service log',
+      '  5) Follow service log   (' + (os === 'win' ? 'any key stops' : 'Ctrl-C stops') + ')',
+      '',
+      '  App and script files',
+      '  6) Install APK',
+      '  8) Download and install the latest APK',
+      '  9) Copy stats files     (stats_*.csv)',
+      ' 10) Copy the script log  (script*.log)',
+      ' 11) Delete the stats files from the device',
+      ' 12) Delete the script log from the device'
+    ]);
+    else lines.push(dim('  … the rest of the menu, as before …'));
+    lines.push('', '  r) Refresh    d) Change device    q) Quit', '');
+    lines.push(o.key ? typed('  choose: ', o.key) : cursor('  choose: '));
+    return term(termTitle[os], lines.concat(o.tail || []));
+  }
+
+  // Option 6: the APK picker, with the device's own build preselected.
+  function frameInstall(os, d) {
+    var mine = 'gap-' + d.abi + '.apk';
+    var list = [mine].concat(APKS.filter(function (a) { return a !== mine; }));
+    var lines = [
+      '  Which APK to install. Press enter for the one built for this device;',
+      '  type a number only if you have a reason to install another build.',
+      '  this device reports ' + d.abi,
+      ''
+    ];
+    list.forEach(function (a, i) { lines.push(i === 0 ? '    1) ' + pad(a, 34) + ' [enter]' : '    ' + (i + 1) + ') ' + a); });
+    return term(termTitle[os], lines.concat([
+      '',
+      typed('  choose [enter = 1]: '),
+      'installing ' + mine + ' on ' + d.serial + ' ...',
+      '  Performing Streamed Install',
+      '  Success',
+      '',
+      look('  OK: Installed ' + mine + '.', 'done'),
+      '',
+      typed('  [enter] to continue ')
+    ]));
+  }
+
+  // Option 1: what the tool prints while it starts the service.
+  function startTail(d) {
+    var lib = { 'arm64-v8a': 'arm64', 'armeabi-v7a': 'arm', 'x86_64': 'x86_64' }[d.abi];
+    return [
+      'starting the service on ' + d.serial + ' ...',
+      '  abi    : ' + d.abi + ' (' + (/64/.test(d.abi) ? 'app_process64' : 'app_process32') + ')',
+      '  libs   : /data/app/~~…/com.gameautomation.platform-…/lib/' + lib,
+      '  step   : staged',
+      '  step   : launch',
+      '',
+      look('  OK: Service is running.', 'the engine is up'),
+      look('      It survives an app reinstall, and stays up until the device reboots.'),
+      '',
+      typed('  [enter] to continue ')
+    ];
+  }
+
+  function toolRun(os, opts) {
+    var phone = opts.device === 'phone';
+    var d = phone ? DEV.phone : DEV[os];
+    var s = [];
+    s.push('The first time, the tool asks whether it may download <b>adb</b> — a small official helper from Google that lets the computer talk to your device. Type <kbd>y</kbd> and press Enter. It only ever does this once.' + frameAdb(os));
+    if (phone) {
+      s.push('Look at the phone: it shows an <b>Allow USB debugging?</b> box. Tick <b>Always allow from this computer</b> and tap <b>Allow</b>. If the tool had already listed the phone as “unauthorized”, type <kbd>r</kbd> and press Enter to look again.' +
+        frameList(os, { serial: d.serial, model: '-', abi: '-' }, 'unauthorized', 'r', 'tap Allow on the phone, then r'));
+      s.push('The list now shows your phone properly. Type its number — <kbd>1</kbd> here — and press Enter.' + frameList(os, d, 'not installed', '1', 'your phone'));
+    } else if (os === 'linux') {
+      s.push('Waydroid is not found by itself, so the tool finds nothing the first time. Type <kbd>q</kbd> to quit it, then in the same terminal connect Waydroid once and start the tool again, with the two lines below. (If the tool said it is using an adb already on your computer, run <code>adb connect 192.168.240.112</code> instead.)' +
+        frameNoDevice(os) +
+        term('Terminal', [cmdline('./adb/linux/adb connect 192.168.240.112'), 'connected to 192.168.240.112:5555', cmdline('./Start-Linux.sh')]));
+      s.push('The list now shows Waydroid as <code>192.168.240.112:5555</code>. Type its number — <kbd>1</kbd> here — and press Enter.' + frameList(os, d, 'not installed', '1', 'Waydroid'));
+    } else {
+      s.push('You see a numbered list of devices, and your emulator is on it. It shows as an address like <code>' + d.serial + '</code>, and the MODEL column shows whatever the emulator claims to be — both are normal. Type its number — <kbd>1</kbd> here — and press Enter.' +
+        frameList(os, d, 'not installed', '1', 'your emulator'));
+    }
+    s.push('This is your device\'s own page. The line that starts with <b>Next:</b> always says what to do — read it whenever you are unsure. Right now the app is not installed, so type <kbd>6</kbd> and press Enter.' +
+      frameDevice(os, d, 'not installed', { menu: 'full', key: '6', note: 'the tool\'s own advice' }));
+    s.push('The tool lists the copies of the app it carries, with the one built for your device already picked. Press Enter to take it. When the <b>OK</b> line appears, press Enter again to get back to the device page.' + frameInstall(os, d));
+    if (opts.startService) {
+      s.push('<b>Service</b> now reads <b>stopped</b>, and <b>Next:</b> says to start it. Type <kbd>1</kbd> and press Enter. After a few seconds the tool says the service is running; press Enter once more.' +
+        frameDevice(os, d, 'stopped', { key: '1', tail: startTail(d) }));
+      s.push('The page comes back with <b>Service: running</b>. That is the engine, and it keeps going on the device whether you leave this window open or close it.' +
+        frameDevice(os, d, 'running', { svcNote: 'all set' }));
+    } else {
+      s.push('That is all the tool needs to do. Because the device is rooted, GAP starts its own engine — the tool says as much above its Service options, so ignore the <b>Next:</b> line this once. Type <kbd>q</kbd> and press Enter to quit.' +
+        frameDevice(os, d, 'stopped', { key: 'q', rootNote: 'this is you' }));
+    }
+    return s;
+  }
+
+  // opts.fps: 120 (the emulator was set to it), 'monitor' (Waydroid), or 60.
+  function appFirstRun(opts) {
+    var s = [];
+    if (opts.device === 'phone') s.push('On the phone, find the new <b>GAP</b> app and open it.');
+    else s.push('In the emulator, find the new <b>GAP</b> app icon and open it.');
+    if (opts.rooted) {
+      s.push('If a box asks whether GAP may have root access, allow it. GAP then starts its own engine and takes both permissions itself. The main screen should say <b>Online</b>; the Settings tab shows <code>root: yes</code>. If a permission still says <b>Grant</b>, press it and flip the switch on.');
+    } else {
+      s.push('It asks for two permissions. Press <b>Grant</b> next to <b>Display over other apps</b>, flip the switch on the screen that opens, and go back. Do the same for <b>All files access</b>. Then press <b>Continue</b>.');
+      s.push('The main screen should say <b>Online</b> at the top. If it says <b>Offline</b>, the engine is not running — go back to the tool and type <kbd>1</kbd>.');
+    }
+    s.push('Open the <b>Library</b> tab. <b>Tsum Tsum</b> is listed there. Tap its <b>Download</b> circle and wait for it to finish.');
+    s.push('Switch to Tsum Tsum and get to its home screen. Then come back to GAP and tap the <b>▶ Play</b> circle on the Tsum Tsum card. A small floating bar appears over the game.');
+    if (opts.fps === 120) {
+      s.push('Tap the <b>⚙</b> on the floating bar to open the script\'s settings. On the <b>General</b> tab set <b>Device frame rate</b> to <b>120</b>, to match the emulator. Then press <b>▶ Play</b> — the bot is playing.');
+    } else if (opts.fps === 'monitor') {
+      s.push('Tap the <b>⚙</b> on the floating bar to open the script\'s settings. On the <b>General</b> tab set <b>Device frame rate</b> to your monitor\'s refresh rate — leave it at 60 unless you know yours is higher. Then press <b>▶ Play</b> — the bot is playing.');
+    } else {
+      s.push('Tap the <b>⚙</b> on the floating bar if you want to look at the script\'s settings — the defaults are fine to start with. Press <b>▶ Play</b> and the bot is playing.');
+    }
+    return s;
+  }
+
+  function runAgain(os) {
+    return os === 'win'
+      ? 'double-click <b>Start-Windows</b> again'
+      : 'open a terminal and run the last two lines from the box in <b>Get the starter tool</b> (<code>cd</code> into the folder, then <code>./Start-Linux.sh</code>)';
+  }
+  function restartNoteTool(os) {
+    if (os === 'linux') return '<strong>After a restart:</strong> whenever Waydroid (or your computer) is closed and opened again, the engine is gone. Open a terminal, connect Waydroid again the same way as before (<code>adb connect 192.168.240.112</code>), then <code>cd</code> into the tool\'s folder, run <code>./Start-Linux.sh</code> and type <kbd>1</kbd>. That is the only chore.';
+    return '<strong>After a restart:</strong> whenever ' + emulatorName[os] + ' (or your computer) is closed and opened again, the engine is gone. Just ' + runAgain(os) + ' — it opens straight to your device — and type <kbd>1</kbd>. That is the only chore.';
+  }
+  function restartNotePhone(os) { return '<strong>After a restart:</strong> the engine stops when the phone reboots. Plug it back in, ' + runAgain(os) + ' — it opens straight to your phone — and type <kbd>1</kbd>. The rest of the time the cable can stay unplugged.'; }
+  var restartNoteRoot = '<strong>After a restart:</strong> nothing to do. A rooted device starts GAP\'s engine by itself whenever the app opens.';
+  var tallPhoneTip = '<strong>Tall phone?</strong> If the script seems to tap in the wrong places, open its settings and turn on <b>Special Screen Ratio (Long Screen)</b>. And leave <b>Device frame rate</b> at 60 unless you know your phone\'s screen runs at a higher rate (90 or 120 Hz).';
+  var linuxPhoneTip = '<strong>Phone shows as “no permissions”?</strong> Some Linux distributions need a udev rule before a normal user may talk to a phone over USB. Search for <em>android udev rules</em> plus your distribution\'s name; it is a one-file fix.';
+  var dragTip = '<strong>Prefer to skip the tool?</strong> On a rooted emulator you can also download ' + dl('gap-x86_64.apk') + ' and drag the file onto the emulator window. Same result.';
+  var noRootTip = {
+    mac: '<strong>Why no root question?</strong> BlueStacks Air has no root switch, so a Mac always takes the tool path — which is fine: it is one keypress after each restart.',
+    linux: '<strong>Why no root question?</strong> Waydroid does not give apps root out of the box (that takes Magisk and the waydroid_script), so this guide takes the tool path, which works as it is.'
+  };
+
+  // Every guide opens with this. The script is tuned for a small screen, and
+  // a modern phone's has several times the pixels, each of which is work.
+  function caution(device) {
+    var lead = '<strong>Screen resolution matters.</strong> GAP reads the screen many times a second, and every pixel is work. The app and the script were built and tuned on a <b>540 × 960</b> screen and run best there';
+    return device === 'phone'
+      ? lead + '. A modern phone or tablet has several times as many pixels, so expect the bot to be noticeably slower on it than on an emulator — slower to see, slower to react, longer rounds. If the phone has a screen-resolution setting (under <b>Display</b> on many phones), set it to the lowest choice; otherwise an emulator on your computer, set to 540 × 960, is the faster home for the bot.'
+      : lead + ' — that is why the emulator steps below set that size. Leave it there: a bigger window looks nicer, but every extra pixel makes the bot slower to see and slower to react.';
+  }
+
+  var cmdWin = 'gap-starter\\GameAutomationPlatform-Starter\\Start-Windows.cmd';
+  var cmdNix = 'cd ~/Downloads\ntar -xzf gap-starter.tar.gz\ncd GameAutomationPlatform-Starter\n./Start-Linux.sh';
+  var cmdRoot = 'service   : connected\nroot      : yes';
+
+  function part(title, colour, steps) { return { title: title, colour: colour, steps: steps }; }
+
+  // ------------------------------------------------------------- guides
+  function buildGuide(s) {
+    var os = s.os;
+    var g = { parts: [], notes: [], tips: [], caution: caution(s.where === 'phone' ? 'phone' : 'emulator') };
+
+    if (s.where === 'phone' && s.root === 'yes') {
+      g.title = 'A rooted phone — no computer needed';
+      g.intro = 'Root lets GAP start its own engine, so the whole setup happens on the phone. Open this page on the phone to make the download easy.';
+      g.parts.push(part('Install the app', 'accent', [
+        'On the phone, download ' + dl('gap-arm64-v8a.apk') + '. (A phone older than about 2016 might need ' + dl('gap-armeabi-v7a.apk') + ' instead.)',
+        'Tap the download when it finishes. If the phone says it cannot install apps from this source, tap <b>Settings</b>, allow it, and go back. Tap <b>Install</b>.',
+        'Make sure <b>Disney Tsum Tsum</b> is installed, signed in, and has shown you its home screen at least once.'
+      ]));
+      g.parts.push(part('Open GAP for the first time', 'teal', appFirstRun({ device: 'phone', rooted: true, fps: 60 })));
+      g.cmd = cmdRoot;
+      g.notes.push(restartNoteRoot);
+      g.tips.push(tallPhoneTip);
+      return g;
+    }
+
+    if (s.where === 'phone') {
+      g.title = 'A phone that is not rooted';
+      g.intro = 'Three parts: switch on a hidden setting on the phone, run the tool on the computer, then use the app. The cable is only needed while the tool runs.';
+      g.parts.push(part('Turn on USB debugging', 'accent', [
+        'On the phone open <b>Settings → About phone</b> and tap <b>Build number</b> seven times in a row, until it says you are now a developer. (Samsung: About phone → Software information. Xiaomi: MIUI version.)',
+        'Go back one screen and open <b>System → Developer options</b> (on Samsung it is at the bottom of the main Settings list). Turn on <b>USB debugging</b>.',
+        'Plug the phone into the computer with a USB cable. If the phone asks what the connection is for, choose <b>File transfer</b>. Some cables only charge — if the computer never notices the phone, try another cable.'
+      ]));
+      g.parts.push(part('Get the starter tool', 'teal', toolGet(os)));
+      g.parts.push(part('Run the tool', 'purple', toolRun(os, { device: 'phone', startService: true })));
+      g.parts.push(part('Open GAP for the first time', 'yellow', appFirstRun({ device: 'phone', rooted: false, fps: 60 })));
+      if (os === 'win') g.cmd = cmdWin;
+      g.notes.push(restartNotePhone(os));
+      g.tips.push(tallPhoneTip);
+      if (os === 'linux') g.tips.push(linuxPhoneTip);
+      return g;
+    }
+
+    // An emulator, with or without root, and "nothing yet", which is the same
+    // guide with the emulator's install in front. Only the Windows emulators
+    // offer a root switch; a Mac or Linux emulator always takes the tool path.
+    var none = s.where === 'none';
+    var rooted = os === 'win' && (none || s.root === 'yes');
+    var name = emulatorName[os];
+    var colours = ['accent', 'teal', 'purple', 'yellow', 'accent'];
+    var c = 0;
+    if (none) {
+      g.title = { win: 'Starting from nothing — MuMu Player, rooted', mac: 'Starting from nothing — BlueStacks Air on your Mac', linux: 'Starting from nothing — Waydroid on Linux' }[os];
+      g.intro = {
+        win: 'Install a free emulator on your PC, set it up the way the script likes, then put GAP on it. Rooting the emulator is one switch, and it means nothing to redo after a restart.',
+        mac: 'BlueStacks Air is the emulator built for M-series Macs. Install it, set it up the way the script likes, then let the tool put GAP on it and start the engine.',
+        linux: 'Waydroid runs Android natively on a Linux desktop. Install it, set it up the way the script likes, then let the tool put GAP on it and start the engine.'
+      }[os];
+      g.parts.push(part('Install ' + name, colours[c++], emulatorInstall[os]));
+    } else if (rooted) {
+      g.title = 'An emulator you can root — the easiest path';
+      g.intro = 'Set the emulator to the screen size and frame rate the script was tuned on, flip its root switch, then put GAP on it. After that the app looks after itself.';
+    } else {
+      g.title = { win: 'An emulator without root', mac: 'BlueStacks Air on an M-series Mac', linux: 'Waydroid on Linux' }[os];
+      g.intro = 'Set ' + name + ' to the screen size the script was tuned on, then let the tool install the app and start the engine. You run the tool again after each restart.';
+    }
+    g.parts.push(part('Set ' + name + ' up for Tsum Tsum', colours[c++], emulatorTune(os, rooted, none)));
+    if (os === 'win' && !rooted) g.tips.push('<strong>Emulator not showing up in the tool later?</strong> MuMu, LDPlayer, Nox and MEmu are found automatically. LDPlayer sometimes needs <b>Settings → Other settings → ADB debugging → Open local connection</b> switched on first.');
+    g.parts.push(part('Get the starter tool', colours[c++], toolGet(os)));
+    g.parts.push(part('Run the tool', colours[c++], toolRun(os, { device: 'emulator', startService: !rooted })));
+    g.parts.push(part('Open GAP for the first time', colours[c++], appFirstRun({ device: 'emulator', rooted: rooted, fps: os === 'linux' ? 'monitor' : 120 })));
+    if (os === 'win') g.cmd = cmdWin;
+    g.notes.push(rooted ? restartNoteRoot : restartNoteTool(os));
+    if (rooted) g.tips.push(dragTip);
+    if (!none && noRootTip[os]) g.tips.push(noRootTip[os]);
+    return g;
+  }
+
+  // ------------------------------------------------------------- render
+  var body = document.getElementById('guide-body');
+  var picker = document.getElementById('picker');
+  function render() {
+    var g = buildGuide(state);
+    var html = '<h3 class="guide-title">' + g.title + '</h3><p class="guide-intro">' + g.intro + '</p>';
+    if (g.caution) html += '<div class="note caution" role="note"><span class="icon" aria-hidden="true">⚠</span><p>' + g.caution + '</p></div>';
+    var n = 0;
+    g.parts.forEach(function (p) {
+      html += '<section class="part"><h4><span class="n bg-' + p.colour + '" aria-hidden="true">' + (++n) + '</span>' + p.title + '</h4><ol class="steps">';
+      p.steps.forEach(function (st) { html += '<li><div>' + st + '</div></li>'; });
+      html += '</ol></section>';
+    });
+    if (g.cmd) html += '<pre class="cmd"><code>' + esc(g.cmd) + '</code></pre>';
+    g.notes.forEach(function (t) { html += '<p class="note">' + t + '</p>'; });
+    g.tips.forEach(function (t) { html += '<p class="tip">' + t + '</p>'; });
+    body.innerHTML = html;
+
+    // The root question only applies to a device that exists and can offer
+    // it: a phone, or a Windows emulator. The computer question only when the
+    // tool is part of the guide.
+    var askRoot = state.where === 'phone' || (state.where === 'emulator' && state.os === 'win');
+    picker.querySelector('[data-q="root"]').hidden = !askRoot;
+    picker.querySelector('[data-q="os"]').hidden = state.where === 'phone' && state.root === 'yes';
+    picker.querySelectorAll('fieldset').forEach(function (f) {
+      f.querySelectorAll('.chip').forEach(function (c) {
+        c.setAttribute('aria-pressed', String(state[f.dataset.q] === c.dataset.v));
+      });
+    });
+    try { localStorage.setItem('gap-setup', JSON.stringify(state)); } catch (e) {}
+  }
+  picker.addEventListener('submit', function (e) { e.preventDefault(); });
+  picker.addEventListener('click', function (e) {
+    var c = e.target.closest('.chip');
+    if (!c) return;
+    state[c.closest('fieldset').dataset.q] = c.dataset.v;
+    render();
+  });
+  render();
+
+  // ---------------------------------------------- live version and sizes
+  // Progressive: the page is complete without either request. The release
+  // API tells us the app version and each asset's real size; official.json
+  // (same origin) tells us the script version.
+  function human(bytes) {
+    if (bytes >= 1048576) return Math.round(bytes / 1048576) + ' MB';
+    if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
+    return bytes + ' B';
+  }
+  try {
+    fetch('https://api.github.com/repos/game-automation-platform/game-automation-catalogue/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rel) {
+        if (!rel || !rel.tag_name) return;
+        var v = String(rel.tag_name).replace(/^gap-app-/, '');
+        document.querySelectorAll('[data-app-version]').forEach(function (el) { el.textContent = v; });
+        (rel.assets || []).forEach(function (a) {
+          document.querySelectorAll('[data-size="' + a.name + '"]').forEach(function (el) { el.textContent = human(a.size); });
+        });
+      }).catch(function () {});
+  } catch (e) {}
+  try {
+    fetch('official.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (cat) {
+        if (!cat || !cat.Scripts) return;
+        var t = cat.Scripts.filter(function (s) { return /tsum/i.test(s.Game || ''); })[0];
+        if (!t || !t.Version) return;
+        var el = document.querySelector('[data-script-version]');
+        if (el) el.textContent = ' (v' + t.Version + (t.Date ? ', ' + String(t.Date).slice(0, 10) : '') + ')';
+      }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
