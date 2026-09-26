@@ -1,0 +1,29 @@
+name: Announce app release
+
+# package-release.sh (in game-automation-app) drafts a gap-app-<version>
+# release here. Publishing that draft posts its changelog to Discord.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    if: startsWith(github.event.release.tag_name, 'gap-app-') && !github.event.release.prerelease
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The body goes through a file, not an argument, so no quoting in it
+      # can break the shell.
+      - name: Announce on Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TITLE: ${{ github.event.release.name || github.event.release.tag_name }}
+          URL: ${{ github.event.release.html_url }}
+        run: |
+          jq -r '.release.body // ""' "$GITHUB_EVENT_PATH" > release-notes.md
+          bash notify-discord-app.sh "$TITLE" "$URL" release-notes.md
